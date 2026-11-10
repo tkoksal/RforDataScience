@@ -1,0 +1,299 @@
+---
+title: "1. Data Visualisation"
+format: 
+  html:
+    highlight-style: github
+    toc: true
+    toc_float: true
+    toc_depth: 3
+    toc-location: left
+    toc-title: "Contents"
+    number-sections: true
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+library(palmerpenguins)
+library(ggthemes)
+```
+
+# First Steps
+
+```{r}
+penguins
+```
+
+```{r}
+glimpse(penguins)
+```
+
+```{r}
+?penguins
+```
+
+## Creating a `ggplot`
+
+```{r}
+ggplot(data = penguins)
+```
+
+```{r echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+)
+```
+
+```{r, echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point()
+```
+
+```{r, echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, colour = species)
+) +
+  geom_point()
+```
+
+```{r, echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, colour = species)
+) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+```{r, echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(colour = species)) +
+  geom_smooth(method = "lm")
+```
+
+```{r, echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(colour = species, shape = species)) +
+  geom_smooth(method = "lm")
+```
+
+```{r, echo=TRUE}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(colour = species, shape = species)) +
+  geom_smooth(method = "lm") +
+   labs(
+    title = "Body mass and flipper length",
+    subtitle = "Dimensions for Adelie, Chinstrap, and Gentoo Penguins",
+    x = "Flipper length (mm)", y = "Body mass (g)",
+    color = "Species", shape = "Species"
+  ) +
+  scale_color_colorblind()
+```
+
+## Exercises
+
+### How many rows are in penguins? How many columns?
+
+```{r echo=TRUE}
+dim(penguins)
+```
+
+```{r}
+nrow(penguins)
+```
+
+```{r}
+ncol(penguins)
+```
+
+```{r}
+glimpse(penguins)
+```
+
+### What does the `bill_depth_mm` variable in the `penguins` data frame describe? Read the help for `?penguins` to find out.
+
+```         
+help("penguins")
+```
+
+or
+
+```         
+?penguins
+```
+
+`bill_depth_mm`:a number denoting bill depth (millimeters)
+
+### Make a scatterplot of `bill_depth_mm` vs. `bill_length_mm.` That is, make a scatterplot with `bill_depth_mm` on the y-axis and `bill_length_mm` on the x-axis. Describe the relationship between these two variables.
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = bill_length_mm, y = bill_depth_mm)
+) +
+  geom_point(mapping = aes(colour = species, shape = species)) +
+  geom_smooth(method = "lm")
+```
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = bill_length_mm, y = bill_depth_mm, colour = species, shape = species)
+) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  scale_color_colorblind()
+```
+
+When species types is ignored, there seems to be an inverse relationship between bill depth and bill length, that is the shorter the bill length the deeper the bill depth (first plot). However, when different species are analysed individually, one can see that the relationship of the two variables is positive within each species (second plot).
+
+### What happens if you make a scatterplot of species vs. bill_depth_mm? What might be a better choice of geom?
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = species, y = bill_depth_mm)
+) +
+  geom_point()
+```
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = species, y = bill_depth_mm)
+) +
+  geom_boxplot()
+```
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = species, y = bill_depth_mm)
+) +
+  geom_violin()
+```
+
+When one of the variables is categoric and the other is numeric/continuous, using boxplot or violin plots are better choices of geom.
+
+### Why does the following give an error and how would you fix it?
+
+```
+ggplot(data = penguins) + 
+  geom_point()
+```
+`mapping` is missing
+
+### What does the `na.rm` argument do in `geom_point()`? What is the default value of the argument? Create a scatterplot where you successfully use this argument set to `TRUE`.
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(na.rm = TRUE)
+```
+
+default value for `na.rm = FALSE`
+
+### Add the following caption to the plot you made in the previous exercise: “Data come from the palmerpenguins package.” Hint: Take a look at the documentation for `labs()`.
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(na.rm = TRUE) +
+  labs(caption = "Data come from the palmerpenguins package.")
+```
+### Recreate the following visualization. What aesthetic should `bill_depth_mm` be mapped to? And should it be mapped at the global level or at the geom level?
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point(mapping = aes(color = bill_depth_mm)) +
+  geom_smooth(method = "loess")
+```
+### Run this code in your head and predict what the output will look like. Then, run the code in R and check your predictions.
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g, color = island)
+) +
+  geom_point() +
+  geom_smooth(se = FALSE)
+```
+### Will these two graphs look different? Why/why not?
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point() +
+  geom_smooth()
+```
+
+```{r}
+ggplot() +
+  geom_point(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  ) +
+  geom_smooth(
+    data = penguins,
+    mapping = aes(x = flipper_length_mm, y = body_mass_g)
+  )
+```
+# `ggplot2` calls
+
+```{r}
+ggplot(
+  data = penguins,
+  mapping = aes(x = flipper_length_mm, y = body_mass_g)
+) +
+  geom_point()
+```
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g)) + geom_point()
+```
+
+```{r}
+penguins |> 
+  ggplot(aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point()
+```
+
+# Visualizing distributions
+
+## A categorical variable
+
+```{r}
+ggplot(penguins, aes(x = species)) + geom_bar()
+```
+```{r}
+  ggplot(penguins, aes(x = fct_infreq(species))) + geom_bar()
+```
+## A numerical variable
+
+```{r}
+ggplot(penguins, aes(x = body_mass_g)) + geom_histogram(binwidth = 200)
+```
+

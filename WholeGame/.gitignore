@@ -1,0 +1,8 @@
+*.html
+1.DataVisualisation_files/
+.Rproj.user
+.Rhistory
+.RData
+.httr-oauth
+.DS_Store
+.quarto
